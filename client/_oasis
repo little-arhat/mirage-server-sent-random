@@ -17,7 +17,7 @@ Executable example
   ByteOpt:        -syntax camlp4o -package js_of_ocaml -package js_of_ocaml.syntax
 
 PostBuildCommand:
-  js_of_ocaml client.byte -o result/client.js
+  js_of_ocaml --pretty --noinline client.byte -o result/client.js
   rm -f client.byte
 
 PostCleanCommand:
