@@ -21,9 +21,9 @@ module Main (C: V1_LWT.CONSOLE)
                                   Lwt_stream.map Cstruct.to_string
                                                  (Lwt_stream.of_list bufs)))
 
-  let handle_landing_page request fs =
+  let handle_static request fs path =
     match H.Request.meth request with
-    | `GET -> lwt read_res = from_fs_to_stream fs "index.html" in
+    | `GET -> lwt read_res = from_fs_to_stream fs path in
               match read_res with
               | `Not_found p -> not_found p
               | `Read_error p -> H.respond_error ~status:`Internal_server_error
@@ -66,10 +66,10 @@ module Main (C: V1_LWT.CONSOLE)
       let _:(unit C.io) = Log.info "Got request to: %s" (Uri.path_and_query uri) in
       try_lwt
         match Uri.path uri with
-        | "/" -> handle_landing_page request fs
+        | "/" -> handle_static request fs "index.html"
         | "/events" -> let conn_id = Cohttp.Connection.to_string http_conn in
                        handle_events request conn_id
-        | path -> not_found path
+        | path -> handle_static request fs path
       with ex ->
           Log.warn "error handling HTTP request: %s\n%s"
             (Printexc.to_string ex)
