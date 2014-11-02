@@ -1,0 +1,24 @@
+OASISFormat: 0.4
+Name:        ssr-client
+Version:     0.0.1
+Synopsis:    js client to mirage-server-sent-random service
+Authors:     Roma Sokolov
+License:     MIT
+Plugins:     DevFiles (0.2)
+BuildTools:  ocamlbuild
+
+Executable example
+  Path:           src
+  MainIs:         client.ml
+  Install:        false
+  CompiledObject: byte
+  BuildTools:     camlp4o
+  BuildDepends:   js_of_ocaml, js_of_ocaml.syntax
+  ByteOpt:        -syntax camlp4o -package js_of_ocaml -package js_of_ocaml.syntax
+
+PostBuildCommand:
+  js_of_ocaml client.byte -o result/client.js
+  rm -f client.byte
+
+PostCleanCommand:
+  rm -f result/client.js
