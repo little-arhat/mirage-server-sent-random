@@ -1,13 +1,16 @@
 
 all: run
 
-client:
-	cd client && make all && cp ./result/client.js ../server/resources/js/ssr.js
+client.js:
+	cd client && make all
 
-server-unix:
+ssr.js: client.js
+	cp ./client/result/client.js ./server/resources/js/ssr.js
+
+server.unix:
 	cd server && mirage configure --unix && make
 
-unix: client server-unix
+unix: server.unix ssr.js
 
 run: unix
 	./server/mir-ssr
@@ -21,4 +24,4 @@ distclean: clean
 	cd server && mirage clean
 	cd client && make distclean && oasis setup-clean
 
-.PHONY: run clean distclean client unix server-unix
+.PHONY: run clean distclean client.js
