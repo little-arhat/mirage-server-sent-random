@@ -3,10 +3,10 @@ _build
 .merlin
 *.xe
 *.xml
-backend.ml
-main.ml
-/myocamlbuild.ml
-/Makefile
+server/backend.ml
+server/main.ml
+server/myocamlbuild.ml
+server/Makefile
 
 # Generated outputs
 *.native
