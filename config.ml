@@ -7,7 +7,7 @@ let net =
       try match Sys.getenv "NET" with
         | "direct" -> `Direct
         | "socket" -> `Socket
-        | _        -> `Direct
+        | _        -> `Socket
       with Not_found -> `Socket
 
 let stack console =
@@ -36,9 +36,9 @@ let fat_ro dir =
 
 let fs =
   match fs_mode, get_mode () with
-  | `Fat, _    -> fat_ro "../files"
-  | `Crunch, `Xen -> crunch "../files"
-  | `Crunch, `Unix -> direct_kv_ro "../files"
+  | `Fat, _    -> fat_ro "./resources"
+  | `Crunch, `Xen -> crunch "./resources"
+  | `Crunch, `Unix -> direct_kv_ro "./resources"
 
 
 let main = foreign
