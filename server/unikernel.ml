@@ -43,6 +43,7 @@ module Main (C: V1_LWT.CONSOLE)
     Lwt_unix.sleep 5.0 >>= fun () ->
     return (Int64.to_string (Random.int64 Int64.max_int)) >>= fun (rnd) ->
     return (Printf.sprintf "data: %s\n\n" rnd) >>= fun (data) ->
+    let _:(unit C.io) = Log.info "Sending data to %s:\n%s" conn_id data in
     return (Some data)
 
   let new_event_stream conn_id =
@@ -62,13 +63,15 @@ module Main (C: V1_LWT.CONSOLE)
     let () = Log.write := C.log_s c in
 
     let callback (_io_conn, http_conn) request body =
+      let conn_id = Cohttp.Connection.to_string http_conn in
       let uri = Cohttp.Request.(request.uri) in
-      let _:(unit C.io) = Log.info "Got request to: %s" (Uri.path_and_query uri) in
+      let _:(unit C.io) = Log.info "Got request from %s to: %s"
+                                   conn_id
+                                   (Uri.path_and_query uri) in
       try_lwt
         match Uri.path uri with
         | "/" -> handle_static request fs "index.html"
-        | "/events" -> let conn_id = Cohttp.Connection.to_string http_conn in
-                       handle_events request conn_id
+        | "/events" -> handle_events request conn_id
         | path -> handle_static request fs path
       with ex ->
           Log.warn "error handling HTTP request: %s\n%s"
